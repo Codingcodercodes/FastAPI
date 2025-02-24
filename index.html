@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Legal Text Simplifier</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            background-color: #f5f5f5;
+            margin: 40px;
+        }
+        h2 {
+            color: #333;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            width: 50%;
+            margin: auto;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+        select, button {
+            padding: 10px;
+            margin: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: none;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #output {
+            margin-top: 20px;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        #loading {
+            display: none;
+            font-size: 14px;
+            color: gray;
+        }
+    </style>
+</head>
+<body>
+    <h2>Legal Text Simplifier & Translator</h2>
+
+    <div class="container">
+        <textarea id="legalText" placeholder="Enter legal text here..."></textarea><br>
+
+        <label for="language">Translate to:</label>
+        <select id="language">
+            <option value="English">English</option>
+            <option value="Hindi">Hindi (Uttar Pradesh, Bihar, etc.)</option>
+            <option value="Telugu">Telugu (Andhra Pradesh, Telangana)</option>
+            <option value="Tamil">Tamil (Tamil Nadu)</option>
+            <option value="Kannada">Kannada (Karnataka)</option>
+            <option value="Malayalam">Malayalam (Kerala)</option>
+            <option value="Marathi">Marathi (Maharashtra)</option>
+            <option value="Gujarati">Gujarati (Gujarat)</option>
+            <option value="Bengali">Bengali (West Bengal)</option>
+            <option value="Punjabi">Punjabi (Punjab)</option>
+            <option value="Odia">Odia (Odisha)</option>
+            <option value="Assamese">Assamese (Assam)</option>
+            <option value="Urdu">Urdu (Jammu & Kashmir, Telangana)</option>
+            <option value="Manipuri">Manipuri (Manipur)</option>
+            <option value="Bodo">Bodo (Assam, NE India)</option>
+            <option value="Kashmiri">Kashmiri (Jammu & Kashmir)</option>
+            <option value="Sindhi">Sindhi</option>
+            <option value="Nepali">Nepali (Sikkim, Darjeeling)</option>
+            <option value="Konkani">Konkani (Goa)</option>
+            <option value="Maithili">Maithili (Bihar, Jharkhand)</option>
+            <option value="Dogri">Dogri (Jammu & Kashmir)</option>
+            <option value="Sanskrit">Sanskrit</option>
+            <option value="Santali">Santali (Jharkhand, Odisha, WB)</option>
+        </select><br>
+
+        <button onclick="simplifyText()">Simplify & Translate</button>
+        <p id="loading">⏳ Processing... Please wait.</p>
+
+        <div id="output"></div>
+    </div>
+
+    <script>
+        async function simplifyText() {
+            const text = document.getElementById("legalText").value;
+            const language = document.getElementById("language").value;
+            const apiUrl = "https://c84e-35-237-248-56.ngrok-free.app/simplify/";
+
+            if (!text.trim()) {
+                alert("Please enter legal text!");
+                return;
+            }
+
+            document.getElementById("loading").style.display = "block"; // Show loading text
+            document.getElementById("output").innerText = ""; // Clear previous output
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ text, language })
+                });
+
+                const data = await response.json();
+                if (data.translated_text) {
+                    document.getElementById("output").innerText = "Simplified Text: " + data.translated_text;
+                } else {
+                    document.getElementById("output").innerText = "Error: " + (data.error || "Could not process request.");
+                }
+            } catch (error) {
+                document.getElementById("output").innerText = "Error connecting to server.";
+            } finally {
+                document.getElementById("loading").style.display = "none"; // Hide loading text
+            }
+        }
+    </script>
+</body>
+</html>
